@@ -61,16 +61,16 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <CustomerServiceOutlined />,
       label: <Link to={'/customer'}>{translate('customers')}</Link>,
     },
-    {
-      key: 'people',
-      icon: <UserOutlined />,
-      label: <Link to={'/people'}>{translate('peoples')}</Link>,
-    },
-    {
-      key: 'company',
-      icon: <ShopOutlined />,
-      label: <Link to={'/company'}>{translate('companies')}</Link>,
-    },
+    // {
+    //   key: 'people',
+    //   icon: <UserOutlined />,
+    //   label: <Link to={'/people'}>{translate('peoples')}</Link>,
+    // },
+    // {
+    //   key: 'company',
+    //   icon: <ShopOutlined />,
+    //   label: <Link to={'/company'}>{translate('companies')}</Link>,
+    // },
     // {
     //   key: 'lead',
     //   icon: <FilterOutlined />,
@@ -131,33 +131,13 @@ function Sidebar({ collapsible, isMobile = false }) {
         {
           key: 'admin',
           // icon: <TeamOutlined />,
-          label: <Link to={'/admin'}>{translate('admin')}</Link>,
+          label: <Link to={'/admin'}>{translate('user')}</Link>,
         },
         {
           key: 'generalSettings',
           label: <Link to={'/settings'}>{translate('settings')}</Link>,
         },
-        {
-          key: 'currency',
-          label: <Link to={'/settings/currency'}>{translate('currencies')}</Link>,
-        },
-
-        // {
-        //   key: 'emailTemplates',
-        //   label: <Link to={'/email'}>{translate('email_templates')}</Link>,
-        // },
-        {
-          key: 'paymentMode',
-          label: <Link to={'/payment/mode'}>{translate('payments_mode')}</Link>,
-        },
-        {
-          key: 'taxes',
-          label: <Link to={'/taxes'}>{translate('taxes')}</Link>,
-        },
-        {
-          key: 'about',
-          label: <Link to={'/about'}>{translate('about')}</Link>,
-        },
+        
         {
           key: 'Import',
           label: <Link to={'/import'}>{translate('Import')}</Link>,

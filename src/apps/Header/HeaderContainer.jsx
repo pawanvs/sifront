@@ -129,12 +129,12 @@ export default function HeaderContent() {
       </Dropdown>
 
       {/* <AppsButton /> */}
-
+{/* 
       <UpgradeButton />
 
       <SelectLanguage />
 
-      {location.pathname === '/' && <ChooseCurrency />}
+      {location.pathname === '/' && <ChooseCurrency />} */}
     </Header>
   );
 }

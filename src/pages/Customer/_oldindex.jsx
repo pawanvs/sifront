@@ -4,20 +4,20 @@ import { fields } from './config';
 
 import useLanguage from '@/locale/useLanguage';
 
-export default function Company() {
+export default function Customer() {
   const translate = useLanguage();
-  const entity = 'company';
+  const entity = 'client';
   const searchConfig = {
     displayLabels: ['name'],
-    searchFields: 'name,phone,eamil',
+    searchFields: 'name',
   };
   const deleteModalLabels = ['name'];
 
   const Labels = {
-    PANEL_TITLE: translate('company'),
-    DATATABLE_TITLE: translate('company_list'),
-    ADD_NEW_ENTITY: translate('add_new_company'),
-    ENTITY_NAME: translate('company'),
+    PANEL_TITLE: translate('client'),
+    DATATABLE_TITLE: translate('client_list'),
+    ADD_NEW_ENTITY: translate('add_new_client'),
+    ENTITY_NAME: translate('client'),
   };
   const configPage = {
     entity,
@@ -30,12 +30,10 @@ export default function Company() {
     deleteModalLabels,
   };
   return (
-    <>
-      <CrudModule
-        createForm={<DynamicForm fields={fields} />}
-        updateForm={<DynamicForm fields={fields} />}
-        config={config}
-      />
-    </>
+    <CrudModule
+      createForm={<DynamicForm fields={fields} />}
+      updateForm={<DynamicForm fields={fields} />}
+      config={config}
+    />
   );
 }

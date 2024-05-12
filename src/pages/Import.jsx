@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { Upload, Button, message, Result } from 'antd';
+import { Upload, Button, message, Result, Tabs } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+
+const { TabPane } = Tabs;
+import ImportCompany from './Company/Import';
+import ImportInvoice from './Invoice/Import';
 
 import { API_BASE_URL } from '@/config/serverApiConfig';
 
@@ -9,6 +13,9 @@ import useLanguage from '@/locale/useLanguage';
 const Import = () => {
   const translate = useLanguage();
   const [fileList, setFileList] = useState([]);
+  function callback(key) {
+    console.log(key);
+  }
 
   const handleChange = (info) => {
     let fileList = [...info.fileList];
@@ -20,47 +27,17 @@ const Import = () => {
     setFileList(fileList);
   };
 
-  const handleUpload = async () => {
-    const formData = new FormData();
-    fileList.forEach((file) => {
-      formData.append('file', file.originFileObj);
-    });
-
-    try {
-      const response = await fetch(`${API_BASE_URL}` + 'import', {
-        method: 'PATCH',
-        body: formData,
-      });
-
-      if (response.ok) {
-        message.success('Upload successful');
-      } else {
-        message.error('Upload failed');
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      message.error('Upload failed');
-    }
-  };
   return (
-    <Result
-      // status="info"
-      
-
-      subTitle={translate('Invoice Bulk Import')}
-      extra={
-        <>
-          <div>
-            <Upload fileList={fileList} onChange={handleChange} beforeUpload={() => false}>
-              <Button icon={<UploadOutlined />}>Select Excel File</Button>
-            </Upload>
-            <Button type="primary" onClick={handleUpload} disabled={fileList.length === 0}>
-              Upload
-            </Button>
-          </div>
-        </>
-      }
-    />
+    <Tabs defaultActiveKey="1" onChange={callback}>
+      <TabPane tab="Invoice data" key="1">
+        <ImportInvoice />
+      </TabPane>
+      <TabPane tab="Company Data" key="2">
+        <ImportCompany />
+      </TabPane>
+     
+    </Tabs>
+    
   );
 };
 

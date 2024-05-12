@@ -15,6 +15,7 @@ export const fields = {
     searchFields: 'firstname,lastname',
     dataIndex: ['mainContact', 'firstname'],
   },
+  
   country: {
     type: 'country',
   },
