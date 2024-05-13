@@ -9,7 +9,7 @@ export default ({ mode }) => {
   const proxy_url =
     process.env.VITE_DEV_REMOTE === 'remote'
       ? process.env.VITE_BACKEND_SERVER
-      : 'http://localhost:8888/';
+      : 'http://si.nividhi.com:5000/';
 
   const config = {
     plugins: [react()],
@@ -20,7 +20,8 @@ export default ({ mode }) => {
       },
     },
     server: {
-      port: 3000,
+      host: '0.0.0.0',
+      port: 4000,
       proxy: {
         '/api': {
           target: proxy_url,
