@@ -6,6 +6,8 @@ const { TabPane } = Tabs;
 import ImportCompany from './Company/Import';
 import ImportInvoice from './Invoice/Import';
 
+import ImportOpemInvoice from './Invoice/ImportOpen';
+
 import { API_BASE_URL } from '@/config/serverApiConfig';
 
 import useLanguage from '@/locale/useLanguage';
@@ -30,9 +32,14 @@ const Import = () => {
   return (
     <Tabs defaultActiveKey="1" onChange={callback}>
       <TabPane tab="Invoice data" key="1">
-        <ImportInvoice />
+      <ImportInvoice />
       </TabPane>
-      <TabPane tab="Company Data" key="2">
+      <TabPane tab="Open Invoice data" key="2">
+      <ImportOpemInvoice />
+
+      
+      </TabPane>
+      <TabPane tab="Company Data" key="3">
         <ImportCompany />
       </TabPane>
      

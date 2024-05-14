@@ -83,18 +83,6 @@ export default () => {
       tooltip: 'The title will automatically collapse if too long'
       
     },
-    // {
-    //   title: 'Account Number',
-    //   dataIndex: 'accountNumber',
-    //   ellipsis: true,
-    //   render: (_, record) => (
-    //     <Space>
-    //       {record.accountNumber}
-    //     </Space>
-    //   ),
-      
-    // },
-    //dayjs(date).format(dateFormat);
     {
       title: 'Name',
       dataIndex: 'name',
@@ -113,6 +101,27 @@ export default () => {
           {record.name}
         </Space>
       ),
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      ellipsis: true,
+      tooltip: 'The title will automatically collapse if too long'
+      
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      ellipsis: true,
+      tooltip: 'The title will automatically collapse if too long'
+      
+    },
+    {
+      title: 'CC Name',
+      dataIndex: 'name_on_card',
+      ellipsis: true,
+      tooltip: 'The title will automatically collapse if too long'
+      
     },
 
     {
@@ -136,7 +145,7 @@ export default () => {
       ellipsis: true,
       render: (_, record) => (
         <Space>
-          {record.payment.card_number}
+          {record.payment?.card_number}
         </Space>
       ),
       
@@ -200,7 +209,8 @@ export default () => {
       dateFormatter="string"
       headerTitle="Customer List"
       toolBarRender={() => [
-        <Button
+        <>
+         <Button
           key="button"
           icon={<ExportOutlined />}
           onClick={() => {
@@ -209,7 +219,7 @@ export default () => {
               let jsonData ;
               try {
                 try {
-                  const response = await axios.get('expiresInMonth');
+                  const response = await axios.get('expiredData');
                   successHandler(response, {
                     notifyOnSuccess: false,
                     notifyOnFailed: true,
@@ -245,7 +255,54 @@ export default () => {
           type="primary"
         >
           Export Expired
+        </Button>
+        <Button
+          key="button"
+          icon={<ExportOutlined />}
+          onClick={() => {
+            //actionRef.current?.reload();
+            const fetchData = async () => {
+              let jsonData ;
+              try {
+                try {
+                  // const response = await axios.get('expiredData');
+                  let response  = await request.listAll({ entity : 'company' });
+                  
+                  jsonData =  response;
+                } catch (error) {
+                  return errorHandler(error);
+                }
+                let et = jsonData.result.map((item)=> {
+
+                  return {"Customer Number" : item.number , "Customer Name" :  item.name , 'Expire' : item.payment.expire , 'Card Number' : item.payment.card_number, "Card Type" : item.payment.card_type};
+
+                })
+
+                const worksheet = XLSX.utils.json_to_sheet(et);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+                XLSX.writeFile(workbook, 'customer_detail.xlsx');
+              } catch (error) {
+                console.error('Error fetching data:', error);
+              }
+            };
+          
+            const exportToExcel = () => {
+              const worksheet = XLSX.utils.json_to_sheet(data);
+              const workbook = XLSX.utils.book_new();
+              XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+              XLSX.writeFile(workbook, 'data.xlsx');
+            };
+
+            fetchData();
+          }}
+          type="primary"
+        >
+          Export All
         </Button>,
+       
+       
+        </>
         
        ,
       ]}

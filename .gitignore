@@ -18,6 +18,9 @@
 # testing
 /coverage
 
+vite.config.js
+/vite.config.js
+/src/config/serverApiConfig.js
 # misc
 .DS_Store
 .env.local

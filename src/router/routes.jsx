@@ -37,6 +37,10 @@ const Offer = lazy(() => import('@/pages/Offer/index'));
 const OfferCreate = lazy(() => import('@/pages/Offer/OfferCreate'));
 const OfferRead = lazy(() => import('@/pages/Offer/OfferRead'));
 const OfferUpdate = lazy(() => import('@/pages/Offer/OfferUpdate'));
+const ClearDataPage = lazy(() => import('@/pages/ClearDataPage'));
+
+
+
 
 const ExpenseCategory = lazy(() => import('@/pages/ExpenseCategory'));
 const Expense = lazy(() => import('@/pages/Expense'));
@@ -77,6 +81,10 @@ let routes = {
     {
       path: '/import',
       element: <Import />,
+    },
+    {
+      path: '/cleardata',
+      element: <ClearDataPage />,
     },
     {
       path: '/',

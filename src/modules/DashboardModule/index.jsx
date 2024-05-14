@@ -113,7 +113,7 @@ export default () => {
       },
         render: (_, record) => (
         <Space>
-          {record.client.company.number}
+          {record.client?.company.number}
         </Space>
       ),
     },
@@ -133,7 +133,7 @@ export default () => {
       },
         render: (_, record) => (
         <Space>
-          {record.client.name}
+          {record.client?.name}
         </Space>
       ),
     },
@@ -181,6 +181,27 @@ export default () => {
         </Space>
       ),
     },
+    {
+      title: 'Is Over Due',
+      dataIndex: 'isOverdue',
+      
+      copyable: true,
+      ellipsis: true,
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: 'This field is required',
+          },
+        ],
+      },
+        render: (_, record) => (
+        <Space>
+          
+          {record.isOverdue == true ? "Over Due" : "--"}
+        </Space>
+      ),
+    },
     
     {
       disable: true,
@@ -222,7 +243,7 @@ export default () => {
       },
         render: (_, record) => (
         <Space>
-          {record.client.company.card_type}
+          {record.client?.company?.card_type}
         </Space>
       ),
     },
@@ -277,9 +298,9 @@ export default () => {
   ];
   return (
     <>
-      <Button type="primary" onClick={handleDelete} disabled={selectedRowKeys.length === 0}>
+      {/* <Button type="primary" onClick={handleDelete} disabled={selectedRowKeys.length === 0}>
           Delete Selected Rows
-        </Button>
+        </Button> */}
     <ProTable
       columns={columns}
       actionRef={actionRef}
@@ -335,6 +356,7 @@ export default () => {
       dateFormatter="string"
       headerTitle="Invoice List"
       toolBarRender={() => [
+        
         <Button
           key="button"
           icon={<ExportOutlined />}
@@ -343,15 +365,19 @@ export default () => {
             const fetchData = async () => {
               try {
                 //const response = await fetch('YOUR_API_ENDPOINT');
-                let jsonData  = await request.list({ entity : 'invoice' });
+                let jsonData  = await request.listAll({ entity : 'invoice' });
 
-                let et = jsonData.result.map((item)=> {
 
-                  return {"Invoice Number" : item.number , "Invoice Date" :  item.date , 'Customer Number' : item.client.number , 'Customer Name' : item.client.name, 'Invoice Amount ' : item.total};
+                const filteredDate = jsonData.result.filter(item => {
+                  //const itemDate = new Date(item.date);
+                  
+                   return item.isOverdue == true;
+               });
 
-                  // { 
-                  //    ,  , 
-                  //   {moneyFormatter({ amount: record.total, currency_code: item.currency })} }  ;
+                let et = filteredDate.map((item)=> {
+
+                  return {"Invoice Number" : item.number , "Invoice Date" :  item.date , 'Customer Number' : item.client?.number , 'Customer Name' : item.client?.name, 'Invoice Amount ' : item.total};
+
                 })
 
                 const worksheet = XLSX.utils.json_to_sheet(et);
@@ -374,8 +400,46 @@ export default () => {
           }}
           type="primary"
         >
-          Export
+          Export Overdue
         </Button>,
+         <Button
+         key="button"
+         icon={<ExportOutlined />}
+         onClick={() => {
+           //actionRef.current?.reload();
+           const fetchData = async () => {
+             try {
+               //const response = await fetch('YOUR_API_ENDPOINT');
+               let jsonData  = await request.listAll({ entity : 'invoice' });
+
+               let et = jsonData.result.map((item)=> {
+
+                 return {"Invoice Number" : item.number , "Invoice Date" :  item.date , 'Customer Number' : item.client?.number , 'Customer Name' : item.client?.name, 'Invoice Amount ' : item.total};
+
+               })
+
+               const worksheet = XLSX.utils.json_to_sheet(et);
+               const workbook = XLSX.utils.book_new();
+               XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+               XLSX.writeFile(workbook, 'invoice.xlsx');
+             } catch (error) {
+               console.error('Error fetching data:', error);
+             }
+           };
+         
+           const exportToExcel = () => {
+             const worksheet = XLSX.utils.json_to_sheet(data);
+             const workbook = XLSX.utils.book_new();
+             XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+             XLSX.writeFile(workbook, 'data.xlsx');
+           };
+
+           fetchData();
+         }}
+         type="primary"
+       >
+         Export All
+       </Button>
        ,
       ]}
     />

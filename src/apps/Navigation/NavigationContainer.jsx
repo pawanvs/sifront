@@ -142,6 +142,10 @@ function Sidebar({ collapsible, isMobile = false }) {
           key: 'Import',
           label: <Link to={'/import'}>{translate('Import')}</Link>,
         },
+        {
+          key: 'ClearData',
+          label: <Link to={'/cleardata'}>{translate('Clear Data')}</Link>,
+        },
       ],
     },
   ];
