@@ -9,7 +9,14 @@ const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Customer = lazy(() => import('@/pages/Customer'));
 const Inventory = lazy(() => import('@/pages/Inventory'));
 const Order = lazy(() => import('@/pages/Order'));
-const Invoice = lazy(() => import('@/pages/Invoice'));
+
+// const Invoice = lazy(() => import('@/pages/Invoice'));
+
+
+const Invoice = lazy(() => import('@/modules/InvoiceModule/invoice-index'));
+const OpenInvoice = lazy(() => import('@/modules/InvoiceModule/open-invoice-index'));
+
+
 const InvoiceCreate = lazy(() => import('@/pages/Invoice/InvoiceCreate'));
 
 const InvoiceRead = lazy(() => import('@/pages/Invoice/InvoiceRead'));
@@ -121,6 +128,10 @@ let routes = {
     {
       path: '/invoice',
       element: <Invoice />,
+    },
+    {
+      path: '/open-invoice',
+      element: <OpenInvoice />,
     },
     {
       path: '/invoice/create',

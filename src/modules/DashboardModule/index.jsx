@@ -1,448 +1,221 @@
-import { EllipsisOutlined, PlusOutlined, ExportOutlined } from '@ant-design/icons';
-import { useRef , useState} from 'react';
-import { Button, DatePicker, Space, Table, Dropdown, Tag , Modal } from 'antd';
-import { ProTable, TableDropdown } from '@ant-design/pro-components';
+import { useEffect, useState } from 'react';
+
+import { Tag, Row, Col, Result } from 'antd';
+import useLanguage from '@/locale/useLanguage';
+
+import { useMoney } from '@/settings';
+
 import { request } from '@/request';
-import dayjs from 'dayjs';
-import * as XLSX from 'xlsx';
-import { useMoney, useDate } from '@/settings';
+import useFetch from '@/hooks/useFetch';
+import useOnFetch from '@/hooks/useOnFetch';
+import { tagColor } from '@/utils/statusTagColor';
 
+import RecentTable from './components/RecentTable';
 
-export const waitTimePromise = async (time = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
+import SummaryCard from './components/SummaryCard';
+import PreviewCard from './components/PreviewCard';
+import CustomerPreviewCard from './components/CustomerPreviewCard';
 
-export const waitTime = async (time = 100) => {
-  await waitTimePromise(time);
-};
-const DeleteButton = ({ record, onDelete }) => {
-  const handleDelete = () => {
-    Modal.confirm({
-      title: 'Confirm Delete',
-      content: `Are you sure you want to delete ${record.client.name}?`,
-      okText: 'Yes',
-      okType: 'danger',
-      cancelText: 'No',
-      onOk() {
-        // onDelete(record.key);
-        console.log(record);
-      },
+import { selectMoneyFormat } from '@/redux/settings/selectors';
+import { useSelector } from 'react-redux';
+
+export default function DashboardModule() {
+  const translate = useLanguage();
+  const { moneyFormatter } = useMoney();
+  const money_format_settings = useSelector(selectMoneyFormat);
+
+  const getStatsData = async ({ entity, currency }) => {
+    return await request.summary({
+      entity,
+      options: { currency },
     });
   };
 
-  return <Button onClick={handleDelete}>Delete</Button>;
-};
+  const {
+    result: invoiceResult,
+    isLoading: invoiceLoading,
+    onFetch: fetchInvoicesStats,
+  } = useOnFetch();
 
-//record
-export default () => {
-  const actionRef = useRef();
-  const { moneyFormatter } = useMoney();
-  const { dateFormat } = useDate();
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  // Handle row selection
-  const onSelectChange = selectedRowKeys => {
-    setSelectedRowKeys(selectedRowKeys);
-  };
+  const { result: quoteResult, isLoading: quoteLoading, onFetch: fetchQuotesStats } = useOnFetch();
 
-  // Handle row selection
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
+  const { result: offerResult, isLoading: offerLoading, onFetch: fetchOffersStats } = useOnFetch();
 
-  // Handle delete button click
-  const handleDelete = () => {
-    // Filter out selected rows
-    
+  const {
+    result: paymentResult,
+    isLoading: paymentLoading,
+    onFetch: fetchPayemntsStats,
+  } = useOnFetch();
 
-    console.log(selectedRowKeys);
-    // Update table data
-    // dataSource.splice(0, dataSource.length, ...newData);
-    // Clear selected row keys
-    setSelectedRowKeys([]);
-  };
-  const columns = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
-      title: 'Invoice Number',
-      dataIndex: 'number',
-      ellipsis: true,
-      tooltip: 'The title will automatically collapse if too long'
-      
-    },
-    //dayjs(date).format(dateFormat);
-    {
-      title: 'Invoice Date',
-      dataIndex: 'date',
-      ellipsis: true,
-      tooltip: 'The title will automatically collapse if too long',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: 'This field is required',
-          },
-        ],
-      },
-      render: (_, record) => (
-        <Space>
-          {dayjs(record.date).format(dateFormat)}
-        </Space>
-      ),
-    },
-    {
-      title: 'Customer Number',
-      dataIndex: 'client',
-      ellipsis: true,
-      tooltip: 'The title will automatically collapse if too long',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: 'This field is required',
-          },
-        ],
-      },
-        render: (_, record) => (
-        <Space>
-          {record.client?.company.number}
-        </Space>
-      ),
-    },
-
-    {
-      title: 'Customer Name',
-      dataIndex: 'client',
-      copyable: true,
-      ellipsis: true,
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: 'This field is required',
-          },
-        ],
-      },
-        render: (_, record) => (
-        <Space>
-          {record.client?.name}
-        </Space>
-      ),
-    },
-
-
-
-    {
-      title: 'Invoice Amount ',
-      dataIndex: 'client',
-      copyable: true,
-      ellipsis: true,
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: 'This field is required',
-          },
-        ],
-      },
-        render: (_, record) => (
-        <Space>
-          
-          {moneyFormatter({ amount: record.total, currency_code: record.currency })}
-        </Space>
-      ),
-    },
-    {
-      title: 'Net Due',
-      dataIndex: 'client',
-      type: 'Number',
-      copyable: true,
-      ellipsis: true,
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: 'This field is required',
-          },
-        ],
-      },
-        render: (_, record) => (
-        <Space>
-          
-          {moneyFormatter({ amount: record.total - record.credit, currency_code: record.currency })}
-        </Space>
-      ),
-    },
-    {
-      title: 'Is Over Due',
-      dataIndex: 'isOverdue',
-      
-      copyable: true,
-      ellipsis: true,
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: 'This field is required',
-          },
-        ],
-      },
-        render: (_, record) => (
-        <Space>
-          
-          {record.isOverdue == true ? "Over Due" : "--"}
-        </Space>
-      ),
-    },
-    
-    {
-      disable: true,
-      title: 'Status',
-      dataIndex: 'paymentStatus',
-      filters: true,
-      onFilter: true,
-      ellipsis: true,
-      valueType: 'select',
-      valueEnum: {
-        all: { text: 'Very Long'.repeat(50) },
-        open: {
-          text: 'Unpaid',
-          status: 'Unpaid',
-        },
-        closed: {
-          text: 'Resolved',
-          status: 'Success',
-          disabled: true,
-        },
-        processing: {
-          text: 'In Progress',
-          status: 'Processing',
-        },
-      },
-    },
-    {
-      title: 'Payment Method',
-      dataIndex: 'client',
-      ellipsis: true,
-      tooltip: 'The title will automatically collapse if too long',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: 'This field is required',
-          },
-        ],
-      },
-        render: (_, record) => (
-        <Space>
-          {record.client?.company?.card_type}
-        </Space>
-      ),
-    },
-    // {
-    //   disable: true,
-    //   title: 'Labels',
-    //   dataIndex: 'labels',
-    //   search: false,
-    //   renderFormItem: (_, { defaultRender }) => {
-    //     return defaultRender(_);
-    //   },
-    //   render: (_, record) => (
-    //     <Space>
-    //       {record.labels.map(({ name, color }) => (
-    //         <Tag color={color} key={name}>
-    //           {name}
-    //         </Tag>
-    //       ))}
-    //     </Space>
-    //   ),
-    // },
-    
-    
-    // {
-    //   title: 'Actions',
-    //   valueType: 'option',
-    //   key: 'option',
-    //   render: (text, record, _, action) => [
-    //     <a
-    //       key="editable"
-    //       onClick={() => {
-    //         action?.startEditable?.(record._id);
-    //       }}
-    //     >
-    //       Edit
-    //     </a>,
-    //     <a href={record._id} target="_blank" rel="noopener noreferrer" key="view">
-    //       View
-    //     </a>,
-    //     //  <DeleteButton record={record} onDelete={handleDelete} />
-    //     ,
-    //     <TableDropdown
-    //       key="actionGroup"
-    //       onSelect={() => action?.reload()}
-    //       menus={[
-    //         { key: 'copy', name: 'Copy' },
-    //         { key: 'delete', name: 'Delete' },
-    //       ]}
-    //     />,
-    //   ],
-    // },
-  ];
-  return (
-    <>
-      {/* <Button type="primary" onClick={handleDelete} disabled={selectedRowKeys.length === 0}>
-          Delete Selected Rows
-        </Button> */}
-    <ProTable
-      columns={columns}
-      actionRef={actionRef}
-      rowSelection={{
-        selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-        selectedRowKeys,
-        onChange: onSelectChange,
-        
-      }}
-      cardBordered
-      //Data loading is handeled here
-      request={async (params, sort, filter) => {
-        console.log(params,sort, filter);
-       
-      const options = {page : params.current, items : params.pageSize}
-      let resdata  = await request.list({ entity : 'invoice', options });
-
-          return { page : resdata.pagination.page , success : resdata.success , total : resdata.pagination.count , data : resdata.result}
-      }}
-      editable={{
-        type: 'multiple',
-      }}
-      columnsState={{
-        persistenceKey: 'pro-table-singe-demos',
-        persistenceType: 'localStorage',
-        defaultValue: {
-          option: { fixed: 'right', disable: true },
-        },
-        onChange(value) {
-          console.log('value: ', value);
-        },
-      }}
-      rowKey="_id"
-      search={{
-        labelWidth: 'auto',
-      }}
-      
-      form={{
-        syncToUrl: (values, type) => {
-          if (type === 'get') {
-            return {
-              ...values,
-              created_at: [values.startTime, values.endTime],
-            };
-          }
-          return values;
-        },
-      }}
-      pagination={{
-        pageSize: 10,
-        onChange: (page) => console.log(page),
-      }}
-      dateFormatter="string"
-      headerTitle="Invoice List"
-      toolBarRender={() => [
-        
-        <Button
-          key="button"
-          icon={<ExportOutlined />}
-          onClick={() => {
-            //actionRef.current?.reload();
-            const fetchData = async () => {
-              try {
-                //const response = await fetch('YOUR_API_ENDPOINT');
-                let jsonData  = await request.listAll({ entity : 'invoice' });
-
-
-                const filteredDate = jsonData.result.filter(item => {
-                  //const itemDate = new Date(item.date);
-                  
-                   return item.isOverdue == true;
-               });
-
-                let et = filteredDate.map((item)=> {
-
-                  return {"Invoice Number" : item.number , "Invoice Date" :  item.date , 'Customer Number' : item.client?.number , 'Customer Name' : item.client?.name, 'Invoice Amount ' : item.total};
-
-                })
-
-                const worksheet = XLSX.utils.json_to_sheet(et);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-                XLSX.writeFile(workbook, 'invoice.xlsx');
-              } catch (error) {
-                console.error('Error fetching data:', error);
-              }
-            };
-          
-            const exportToExcel = () => {
-              const worksheet = XLSX.utils.json_to_sheet(data);
-              const workbook = XLSX.utils.book_new();
-              XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-              XLSX.writeFile(workbook, 'data.xlsx');
-            };
-
-            fetchData();
-          }}
-          type="primary"
-        >
-          Export Overdue
-        </Button>,
-         <Button
-         key="button"
-         icon={<ExportOutlined />}
-         onClick={() => {
-           //actionRef.current?.reload();
-           const fetchData = async () => {
-             try {
-               //const response = await fetch('YOUR_API_ENDPOINT');
-               let jsonData  = await request.listAll({ entity : 'invoice' });
-
-               let et = jsonData.result.map((item)=> {
-
-                 return {"Invoice Number" : item.number , "Invoice Date" :  item.date , 'Customer Number' : item.client?.number , 'Customer Name' : item.client?.name, 'Invoice Amount ' : item.total};
-
-               })
-
-               const worksheet = XLSX.utils.json_to_sheet(et);
-               const workbook = XLSX.utils.book_new();
-               XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-               XLSX.writeFile(workbook, 'invoice.xlsx');
-             } catch (error) {
-               console.error('Error fetching data:', error);
-             }
-           };
-         
-           const exportToExcel = () => {
-             const worksheet = XLSX.utils.json_to_sheet(data);
-             const workbook = XLSX.utils.book_new();
-             XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-             XLSX.writeFile(workbook, 'data.xlsx');
-           };
-
-           fetchData();
-         }}
-         type="primary"
-       >
-         Export All
-       </Button>
-       ,
-      ]}
-    />
-    </>
+  const { result: clientResult, isLoading: clientLoading } = useFetch(() =>
+    request.summary({ entity: 'client' })
   );
-};
+
+  useEffect(() => {
+    const currency = money_format_settings.default_currency_code || null;
+
+    if (currency) {
+      fetchInvoicesStats(getStatsData({ entity: 'invoice', currency }));
+      fetchQuotesStats(getStatsData({ entity: 'quote', currency }));
+      fetchOffersStats(getStatsData({ entity: 'offer', currency }));
+      fetchPayemntsStats(getStatsData({ entity: 'payment', currency }));
+    }
+  }, [money_format_settings.default_currency_code]);
+
+  const dataTableColumns = [
+    {
+      title: translate('number'),
+      dataIndex: 'number',
+    },
+    {
+      title: translate('Client'),
+      dataIndex: ['client', 'name'],
+    },
+
+    {
+      title: translate('Total'),
+      dataIndex: 'total',
+      onCell: () => {
+        return {
+          style: {
+            textAlign: 'right',
+            whiteSpace: 'nowrap',
+            direction: 'ltr',
+          },
+        };
+      },
+      render: (total, record) => moneyFormatter({ amount: total, currency_code: record.currency }),
+    },
+    {
+      title: translate('Status'),
+      dataIndex: 'status',
+      render: (status) => {
+        return <Tag color={tagColor(status)?.color}>{translate(status)}</Tag>;
+      },
+    },
+  ];
+
+  const entityData = [
+    {
+      result: invoiceResult,
+      isLoading: invoiceLoading,
+      entity: 'invoice',
+      title: translate('Invoices'),
+    },
+    {
+      result: quoteResult,
+      isLoading: quoteLoading,
+      entity: 'quote',
+      title: translate('proforma invoices'),
+    },
+    {
+      result: offerResult,
+      isLoading: offerLoading,
+      entity: 'offer',
+      title: translate('offers'),
+    },
+  ];
+
+  const statisticCards = entityData.map((data, index) => {
+    const { result, entity, isLoading, title } = data;
+
+    return (
+      <PreviewCard
+        key={index}
+        title={title}
+        isLoading={isLoading}
+        entity={entity}
+        statistics={
+          !isLoading &&
+          result?.performance?.map((item) => ({
+            tag: item?.status,
+            color: 'blue',
+            value: item?.percentage,
+          }))
+        }
+      />
+    );
+  });
+
+  if (money_format_settings) {
+    return (
+      <>
+      <Result
+      status="404"
+      title="Under Construction"
+      subTitle="Sorry, this page is currently under construction. Please check back later."
+    />
+        {/* <Row gutter={[32, 32]}>
+          <SummaryCard
+            title={translate('Invoices')}
+            tagColor={'cyan'}
+            prefix={translate('This month')}
+            isLoading={invoiceLoading}
+            data={invoiceResult?.total}
+          />
+          <SummaryCard
+            title={translate('proforma invoices')}
+            tagColor={'purple'}
+            prefix={translate('This month')}
+            isLoading={quoteLoading}
+            data={quoteResult?.total}
+          />
+          <SummaryCard
+            title={translate('offers')}
+            tagColor={'green'}
+            prefix={translate('This month')}
+            isLoading={offerLoading}
+            data={offerResult?.total}
+          />
+          <SummaryCard
+            title={translate('Unpaid')}
+            tagColor={'red'}
+            prefix={translate('Not Paid')}
+            isLoading={invoiceLoading}
+            data={invoiceResult?.total_undue}
+          />
+        </Row>
+        <div className="space30"></div>
+        <Row gutter={[32, 32]}>
+          <Col className="gutter-row w-full" sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 18 }}>
+            <div className="whiteBox shadow" style={{ height: 458 }}>
+              <Row className="pad20" gutter={[0, 0]}>
+                {statisticCards}
+              </Row>
+            </div>
+          </Col>
+          <Col className="gutter-row w-full" sm={{ span: 24 }} md={{ span: 24 }} lg={{ span: 6 }}>
+            <CustomerPreviewCard
+              isLoading={clientLoading}
+              activeCustomer={clientResult?.active}
+              newCustomer={clientResult?.new}
+            />
+          </Col>
+        </Row>
+        <div className="space30"></div>
+        <Row gutter={[32, 32]}>
+          <Col className="gutter-row w-full" sm={{ span: 24 }} lg={{ span: 12 }}>
+            <div className="whiteBox shadow pad20" style={{ height: '100%' }}>
+              <h3 style={{ color: '#22075e', marginBottom: 5, padding: '0 20px 20px' }}>
+                {translate('Recent Invoices')}
+              </h3>
+
+              <RecentTable entity={'invoice'} dataTableColumns={dataTableColumns} />
+            </div>
+          </Col>
+
+          <Col className="gutter-row w-full" sm={{ span: 24 }} lg={{ span: 12 }}>
+            <div className="whiteBox shadow pad20" style={{ height: '100%' }}>
+              <h3 style={{ color: '#22075e', marginBottom: 5, padding: '0 20px 20px' }}>
+                {translate('Recent Quotes')}
+              </h3>
+              <RecentTable entity={'quote'} dataTableColumns={dataTableColumns} />
+            </div>
+          </Col>
+        </Row> */}
+      </>
+    );
+  } else {
+    return <></>;
+  }
+}
