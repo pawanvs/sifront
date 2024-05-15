@@ -7,12 +7,12 @@ export default function GeneralSettingsModule({ config }) {
   const translate = useLanguage();
   return (
     <UpdateSettingModule config={config}>
-      <SetingsSection
+      {/* <SetingsSection
         title={translate('App Settings')}
         description={translate('Update your app configuration')}
       >
         <GeneralSettingForm />
-      </SetingsSection>
+      </SetingsSection> */}
     </UpdateSettingModule>
   );
 }

@@ -86,7 +86,7 @@ const ImportCompany = () => {
                 placeholder="Select a customerType"
               >
                 <Select.Option value="Dealer">Dealer</Select.Option>
-                <Select.Option value="People">People</Select.Option>
+                <Select.Option value="People">End User</Select.Option>
               </Select>
             </Form.Item>
             <Form.Item>

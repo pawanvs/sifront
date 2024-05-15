@@ -15,7 +15,7 @@ export default function AuthLayout({ sideContent, children }) {
           }}
 
         >
-          <SelectLanguage />
+          {/* <SelectLanguage /> */}
         </Content>
         <Row>
           <Col

@@ -90,7 +90,7 @@ function Sidebar({ collapsible, isMobile = false }) {
     {
       key: 'invoice',
       icon: <ContainerOutlined />,
-      label: <Link to={'/invoice'}>{translate('invoices')}</Link>,
+      label: <Link to={'/invoice'}>{translate('Invoice Register')}</Link>,
     },
     // {
     //   key: 'quote',

@@ -138,8 +138,6 @@ export default () => {
       ),
     },
 
-
-
     {
       title: 'Invoice Amount ',
       dataIndex: 'client',
@@ -157,6 +155,70 @@ export default () => {
         <Space>
           
           {moneyFormatter({ amount: record.total, currency_code: record.currency })}
+        </Space>
+      ),
+    },
+
+    {
+      title: 'Phone',
+      dataIndex: 'client',
+      copyable: true,
+      ellipsis: true,
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: 'This field is required',
+          },
+        ],
+      },
+        render: (_, record) => (
+        <Space>
+          
+          {record.client.company?.phone}
+          
+        </Space>
+      ),
+    },
+    {
+      title: 'Email',
+      dataIndex: 'client',
+      copyable: true,
+      ellipsis: true,
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: 'This field is required',
+          },
+        ],
+      },
+        render: (_, record) => (
+        <Space>
+          
+          {record.client.company?.email}
+          
+        </Space>
+      ),
+    },
+    {
+      title: 'Name On CC',
+      dataIndex: 'client',
+      copyable: true,
+      ellipsis: true,
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: 'This field is required',
+          },
+        ],
+      },
+        render: (_, record) => (
+        <Space>
+          
+          {record.client.company?.name_on_card}
+          
         </Space>
       ),
     },
@@ -181,53 +243,8 @@ export default () => {
         </Space>
       ),
     },
-    {
-      title: 'Is Over Due',
-      dataIndex: 'isOverdue',
-      
-      copyable: true,
-      ellipsis: true,
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: 'This field is required',
-          },
-        ],
-      },
-        render: (_, record) => (
-        <Space>
-          
-          {record.isOverdue == true ? "Over Due" : "--"}
-        </Space>
-      ),
-    },
     
-    {
-      disable: true,
-      title: 'Status',
-      dataIndex: 'paymentStatus',
-      filters: true,
-      onFilter: true,
-      ellipsis: true,
-      valueType: 'select',
-      valueEnum: {
-        all: { text: 'Very Long'.repeat(50) },
-        open: {
-          text: 'Unpaid',
-          status: 'Unpaid',
-        },
-        closed: {
-          text: 'Resolved',
-          status: 'Success',
-          disabled: true,
-        },
-        processing: {
-          text: 'In Progress',
-          status: 'Processing',
-        },
-      },
-    },
+    
     {
       title: 'Payment Method',
       dataIndex: 'client',

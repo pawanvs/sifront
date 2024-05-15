@@ -103,6 +103,25 @@ export default () => {
       ),
     },
     {
+      title: 'Sub Type',
+      dataIndex: 'isClient',
+      ellipsis: true,
+      tooltip: 'The title will automatically collapse if too long',
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: 'This field is required',
+          },
+        ],
+      },
+      render: (_, record) => (
+        <Space>
+          {record.isClient ? "Dealer" : "End User"}
+        </Space>
+      ),
+    },
+    {
       title: 'Email',
       dataIndex: 'email',
       ellipsis: true,
@@ -234,7 +253,10 @@ export default () => {
                 }
                 let et = jsonData.map((item)=> {
 
-                  return {"Customer Number" : item.number , "Customer Name" :  item.name , 'Expire' : item.payment.expire , 'Card Number' : item.payment.card_number, "Card Type" : item.payment.card_type};
+                  return {"Customer Number" : item.number , "Customer Name" :  item.name , 'Expire' : item.payment.expire , 
+                  'Card Number' : item.payment.card_number, "Card Type" : item.payment.card_type,
+                   'Phone' : item.phone , 'Email' : item.email
+                };
 
                 })
 

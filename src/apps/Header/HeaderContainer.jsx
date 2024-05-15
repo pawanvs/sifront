@@ -73,11 +73,11 @@ export default function HeaderContent() {
         </Link>
       ),
     },
-    {
-      icon: <ToolOutlined />,
-      key: 'settingApp',
-      label: <Link to={'/settings'}>{translate('app_settings')}</Link>,
-    },
+    // {
+    //   icon: <ToolOutlined />,
+    //   key: 'settingApp',
+    //   label: <Link to={'/settings'}>{translate('app_settings')}</Link>,
+    // },
 
     {
       type: 'divider',
