@@ -224,11 +224,15 @@ export default () => {
                     notifyOnSuccess: false,
                     notifyOnFailed: true,
                   });
-                  jsonData =  response.data;
+                  const temp = response.data.result;
+                  jsonData =  temp.filter((item)=> {
+
+                    return item.card_type == 'visa' || item.card_type == 'mastercard'
+                  })
                 } catch (error) {
                   return errorHandler(error);
                 }
-                let et = jsonData.result.map((item)=> {
+                let et = jsonData.map((item)=> {
 
                   return {"Customer Number" : item.number , "Customer Name" :  item.name , 'Expire' : item.payment.expire , 'Card Number' : item.payment.card_number, "Card Type" : item.payment.card_type};
 

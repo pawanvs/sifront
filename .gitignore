@@ -19,7 +19,8 @@
 /coverage
 
 vite.config.js
-/src/config/*
+src/config/serverApiConfig.js
+hello.js
 
 # misc
 .DS_Store

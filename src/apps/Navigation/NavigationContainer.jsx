@@ -139,10 +139,10 @@ function Sidebar({ collapsible, isMobile = false }) {
           // icon: <TeamOutlined />,
           label: <Link to={'/admin'}>{translate('user')}</Link>,
         },
-        {
-          key: 'generalSettings',
-          label: <Link to={'/settings'}>{translate('settings')}</Link>,
-        },
+        // {
+        //   key: 'generalSettings',
+        //   label: <Link to={'/settings'}>{translate('settings')}</Link>,
+        // },
         
         {
           key: 'Import',

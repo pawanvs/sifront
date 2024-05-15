@@ -177,7 +177,7 @@ export default () => {
         render: (_, record) => (
         <Space>
           
-          {moneyFormatter({ amount: record.total - record.credit, currency_code: record.currency })}
+          {moneyFormatter({ amount: record.netDue, currency_code: record.currency })}
         </Space>
       ),
     },
@@ -247,60 +247,10 @@ export default () => {
         </Space>
       ),
     },
-    // {
-    //   disable: true,
-    //   title: 'Labels',
-    //   dataIndex: 'labels',
-    //   search: false,
-    //   renderFormItem: (_, { defaultRender }) => {
-    //     return defaultRender(_);
-    //   },
-    //   render: (_, record) => (
-    //     <Space>
-    //       {record.labels.map(({ name, color }) => (
-    //         <Tag color={color} key={name}>
-    //           {name}
-    //         </Tag>
-    //       ))}
-    //     </Space>
-    //   ),
-    // },
     
-    
-    // {
-    //   title: 'Actions',
-    //   valueType: 'option',
-    //   key: 'option',
-    //   render: (text, record, _, action) => [
-    //     <a
-    //       key="editable"
-    //       onClick={() => {
-    //         action?.startEditable?.(record._id);
-    //       }}
-    //     >
-    //       Edit
-    //     </a>,
-    //     <a href={record._id} target="_blank" rel="noopener noreferrer" key="view">
-    //       View
-    //     </a>,
-    //     //  <DeleteButton record={record} onDelete={handleDelete} />
-    //     ,
-    //     <TableDropdown
-    //       key="actionGroup"
-    //       onSelect={() => action?.reload()}
-    //       menus={[
-    //         { key: 'copy', name: 'Copy' },
-    //         { key: 'delete', name: 'Delete' },
-    //       ]}
-    //     />,
-    //   ],
-    // },
   ];
   return (
     <>
-      {/* <Button type="primary" onClick={handleDelete} disabled={selectedRowKeys.length === 0}>
-          Delete Selected Rows
-        </Button> */}
     <ProTable
       columns={columns}
       actionRef={actionRef}
@@ -315,8 +265,10 @@ export default () => {
       request={async (params, sort, filter) => {
         console.log(params,sort, filter);
        
-      const options = {page : params.current, items : params.pageSize, ...{ equal:true,filter:'isOverdue'}}
-      let resdata  = await request.list({ entity : 'invoice', options });
+      //const options = {page : params.current, items : params.pageSize, ...{ equal:true,filter:'isOverdue'}}
+
+      const options = {page : params.current, items : params.pageSize}
+      let resdata  = await request.list({ entity : 'openInvoice', options });
 
           return { page : resdata.pagination.page , success : resdata.success , total : resdata.pagination.count , data : resdata.result}
       }}
@@ -365,14 +317,14 @@ export default () => {
            const fetchData = async () => {
              try {
                //const response = await fetch('YOUR_API_ENDPOINT');
-               const options = { page : 1, items : 100000, equal:true,filter:'isOverdue'}
+               const options = { page : 1, items : 100000}
               //let resdata  = await request.list({ entity : 'invoice', options });
-               let jsonData  = await request.list({ entity : 'invoice' , options });
+               let jsonData  = await request.list({ entity : 'openInvoice' , options });
 
                let et = jsonData.result.map((item)=> {
 
-                return {"Invoice Number" : item.number , "Invoice Date" :  item.date , 'Invoice Amount ' : item.total, 
-                'Customer Number' : item.client?.number , 'Customer Name' : item.client?.name, 
+                return {"Invoice Number" : item.number , "Invoice Date" :  item.date , 'Invoice Amount ' : item.total, "Net Amount" : item.netDue, 
+                'Customer Number' : item.client?.company.number , 'Customer Name' : item.client?.name, 
                 
                 "Phone" : item.client?.company.phone, "Email" : item.client?.company.email, "Card Type" : item.client?.company.card_type,
                  "Expire Date" : item.client?.company.expire, "Description" : item.description};
