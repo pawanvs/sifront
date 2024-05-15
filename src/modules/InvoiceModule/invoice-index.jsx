@@ -7,6 +7,10 @@ import dayjs from 'dayjs';
 import * as XLSX from 'xlsx';
 import { useMoney, useDate } from '@/settings';
 
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
@@ -93,7 +97,9 @@ export default () => {
       },
       render: (_, record) => (
         <Space>
-          {dayjs(record.date).format(dateFormat)}
+          {/* {record.date} */}
+          
+          {dayjs(dayjs.tz(record.date, "America/Toronto")).format("MM/DD/YY")}
         </Space>
       ),
     },
@@ -179,54 +185,7 @@ export default () => {
         </Space>
       ),
     },
-    // {
-    //   disable: true,
-    //   title: 'Labels',
-    //   dataIndex: 'labels',
-    //   search: false,
-    //   renderFormItem: (_, { defaultRender }) => {
-    //     return defaultRender(_);
-    //   },
-    //   render: (_, record) => (
-    //     <Space>
-    //       {record.labels.map(({ name, color }) => (
-    //         <Tag color={color} key={name}>
-    //           {name}
-    //         </Tag>
-    //       ))}
-    //     </Space>
-    //   ),
-    // },
     
-    
-    // {
-    //   title: 'Actions',
-    //   valueType: 'option',
-    //   key: 'option',
-    //   render: (text, record, _, action) => [
-    //     <a
-    //       key="editable"
-    //       onClick={() => {
-    //         action?.startEditable?.(record._id);
-    //       }}
-    //     >
-    //       Edit
-    //     </a>,
-    //     <a href={record._id} target="_blank" rel="noopener noreferrer" key="view">
-    //       View
-    //     </a>,
-    //     //  <DeleteButton record={record} onDelete={handleDelete} />
-    //     ,
-    //     <TableDropdown
-    //       key="actionGroup"
-    //       onSelect={() => action?.reload()}
-    //       menus={[
-    //         { key: 'copy', name: 'Copy' },
-    //         { key: 'delete', name: 'Delete' },
-    //       ]}
-    //     />,
-    //   ],
-    // },
   ];
   return (
     <>

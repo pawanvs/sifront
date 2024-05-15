@@ -8,6 +8,12 @@ import * as XLSX from 'xlsx';
 import { useMoney, useDate } from '@/settings';
 
 
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -94,7 +100,8 @@ export default () => {
       },
       render: (_, record) => (
         <Space>
-          {dayjs(record.date).format(dateFormat)}
+          
+          {dayjs(dayjs.tz(record.date, "America/Toronto")).format("MM/DD/YY")}
         </Space>
       ),
     },
