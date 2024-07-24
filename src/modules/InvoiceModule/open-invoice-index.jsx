@@ -1,13 +1,23 @@
 import { EllipsisOutlined, PlusOutlined, ExportOutlined } from '@ant-design/icons';
 import { useRef , useState} from 'react';
-import { Button, DatePicker, Space, Table, Dropdown, Tag , Modal } from 'antd';
+import { Button, DatePicker, Space, Table, Dropdown, Tag , Modal, Drawer , Input} from 'antd';
 import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import { request } from '@/request';
 import dayjs from 'dayjs';
+
+
 import * as XLSX from 'xlsx';
 import { useMoney, useDate } from '@/settings';
 
+// import request from '@/request';
 
+
+import { useDispatch, useSelector } from 'react-redux';
+import { crud } from '@/redux/crud/actions';
+import { useCrudContext } from '@/context/crud';
+import { selectCreatedItem } from '@/redux/crud/selectors';
+
+const { TextArea } = Input;
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
@@ -49,6 +59,11 @@ export default () => {
   const { moneyFormatter } = useMoney();
   const { dateFormat } = useDate();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const dispatch = useDispatch();
+
+  const [visible, setVisible] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [note, setNote] = useState("");
   // Handle row selection
   const onSelectChange = selectedRowKeys => {
     setSelectedRowKeys(selectedRowKeys);
@@ -71,17 +86,44 @@ export default () => {
     // Clear selected row keys
     setSelectedRowKeys([]);
   };
+
+  const showDrawer = (invoice) => {
+    
+    setSelectedInvoice(invoice);
+    setVisible(true);
+  };
+
+  const onClose = () => {
+    setVisible(false);
+    setSelectedInvoice(null);
+    setNote("");
+  };
+
+  const handleAddNote = () => {
+    // Handle note addition logic (e.g., save to state or backend)
+    console.log(`Note for ${selectedInvoice.number}: ${note}`);
+ 
+    dispatch(crud.create({ entity : 'note', jsonData: {content : note, InvoiceNumber : selectedInvoice.number}, withUpload : false }));
+    onClose();
+  };
   const columns = [
     {
       dataIndex: 'index',
       valueType: 'indexBorder',
       width: 48,
     },
+    //onClick={() => showDrawer(record)
     {
       title: 'Invoice Number',
       dataIndex: 'number',
       ellipsis: true,
-      tooltip: 'The title will automatically collapse if too long'
+      tooltip: 'The title will automatically collapse if too long',
+      render: (_, record) => (
+        <Space onClick={() => showDrawer(record) }>
+          
+          {record.number}
+        </Space>
+      ),
       
     },
     //dayjs(date).format(dateFormat);
@@ -271,6 +313,15 @@ export default () => {
         </Space>
       ),
     },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Button type="link" onClick={() => showDrawer(record)}>
+          View
+        </Button>
+      ),
+    },
     
   ];
   return (
@@ -381,6 +432,33 @@ export default () => {
        ,
       ]}
     />
+
+<Drawer
+        title="Invoice Details"
+        placement="right"
+        onClose={onClose}
+        visible={visible}
+      >
+        {selectedInvoice && (
+          <>
+            <p>Invoice Number: {selectedInvoice.number}</p>
+            <p>Customer Name: </p>
+            <p>Amount:</p>
+
+            <TextArea
+              rows={4}
+              placeholder="Add a note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+            <Button type="primary" onClick={handleAddNote}>
+              Add Note
+            </Button>
+          
+           
+          </>
+        )}
+      </Drawer>
     </>
   );
 };

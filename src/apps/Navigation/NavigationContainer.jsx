@@ -10,6 +10,9 @@ import logoText from '@/style/images/logo.png';
 
 import useResponsive from '@/hooks/useResponsive';
 
+import { selectCurrentAdmin } from '@/redux/auth/selectors';
+import request from '@/request/request';
+
 import {
   SettingOutlined,
   CustomerServiceOutlined,
@@ -41,97 +44,56 @@ export default function Navigation() {
 
 function Sidebar({ collapsible, isMobile = false }) {
   let location = useLocation();
+  const currentAdmin = useSelector(selectCurrentAdmin);
 
   const { state: stateApp, appContextAction } = useAppContext();
   const { isNavMenuClose } = stateApp;
   const { navMenu } = appContextAction;
   const [showLogoApp, setLogoApp] = useState(isNavMenuClose);
   const [currentPath, setCurrentPath] = useState(location.pathname.slice(1));
+  const [permissions, setPermissions] = useState([])
+  const [selectedRole, setSelectedRole] = useState(currentAdmin.role);
+  const [menu, setMenu] = useState([]);
 
+  
+
+  useEffect(() => {
+    fetchPermissions(selectedRole);
+  }, [selectedRole]);
   const translate = useLanguage();
   const navigate = useNavigate();
 
   const items = [
     {
-      key: 'dashboard',
+      key: 'dashboardModule',
       icon: <DashboardOutlined />,
       label: <Link to={'/'}>{translate('dashboard')}</Link>,
     },
     {
-      key: 'customer',
+      key: 'customerModule',
       icon: <CustomerServiceOutlined />,
       label: <Link to={'/customer'}>{translate('customers')}</Link>,
     },
     {
-      key: 'open-invoice',
+      key: 'openInvoiceModule',
       icon: <AlertOutlined />,
       label: <Link to={'/open-invoice'}>{translate('Open Invoice')}</Link>,
     },
-    // {
-    //   key: 'people',
-    //   icon: <UserOutlined />,
-    //   label: <Link to={'/people'}>{translate('peoples')}</Link>,
-    // },
-    // {
-    //   key: 'company',
-    //   icon: <ShopOutlined />,
-    //   label: <Link to={'/company'}>{translate('companies')}</Link>,
-    // },
-    // {
-    //   key: 'lead',
-    //   icon: <FilterOutlined />,
-    //   label: <Link to={'/lead'}>{translate('leads')}</Link>,
-    // },
-    // {
-    //   key: 'offer',
-    //   icon: <FileOutlined />,
-    //   label: <Link to={'/offer'}>{translate('offers')}</Link>,
-    // },
+  
     {
-      key: 'invoice',
+      key: 'companyModule',
+      icon: <ShopOutlined />,
+      label: <Link to={'/company'}>{translate('companies')}</Link>,
+    },
+    {
+      key: 'invoiceModule',
       icon: <ContainerOutlined />,
       label: <Link to={'/invoice'}>{translate('Invoice Register')}</Link>,
     },
-    // {
-    //   key: 'quote',
-    //   icon: <FileSyncOutlined />,
-    //   label: <Link to={'/quote'}>{translate('proforma invoices')}</Link>,
-    // },
-    // {
-    //   key: 'payment',
-    //   icon: <CreditCardOutlined />,
-    //   label: <Link to={'/payment'}>{translate('payments')}</Link>,
-    // },
-
-    // {
-    //   key: 'product',
-    //   icon: <TagOutlined />,
-    //   label: <Link to={'/product'}>{translate('products')}</Link>,
-    // },
-    // {
-    //   key: 'categoryproduct',
-    //   icon: <TagsOutlined />,
-    //   label: <Link to={'/category/product'}>{translate('products_category')}</Link>,
-    // },
-    // {
-    //   key: 'expenses',
-    //   icon: <WalletOutlined />,
-    //   label: <Link to={'/expenses'}>{translate('expenses')}</Link>,
-    // },
-    // {
-    //   key: 'expensesCategory',
-    //   icon: <ReconciliationOutlined />,
-    //   label: <Link to={'/category/expenses'}>{translate('expenses_Category')}</Link>,
-    // },
-    // {
-    //   key: 'employee',
-    //   icon: <UserOutlined />,
-    //   label: <Link to={'/employee'}>{translate('employee')}</Link>,
-    // },
-
+    
     {
       label: translate('Settings'),
-      key: 'settings',
+      key: 'settingsModule',
       icon: <SettingOutlined />,
       children: [
         {
@@ -139,11 +101,7 @@ function Sidebar({ collapsible, isMobile = false }) {
           // icon: <TeamOutlined />,
           label: <Link to={'/admin'}>{translate('user')}</Link>,
         },
-        // {
-        //   key: 'generalSettings',
-        //   label: <Link to={'/settings'}>{translate('settings')}</Link>,
-        // },
-        
+    
         {
           key: 'Import',
           label: <Link to={'/import'}>{translate('Import')}</Link>,
@@ -152,9 +110,34 @@ function Sidebar({ collapsible, isMobile = false }) {
           key: 'ClearData',
           label: <Link to={'/cleardata'}>{translate('Clear Data')}</Link>,
         },
+        {
+          key: 'Module',
+          label: <Link to={'/module-config'}>{translate('Module Settings')}</Link>,
+        },
       ],
     },
   ];
+
+
+
+  const fetchPermissions = async (role) => {
+
+
+    const response = await request.read({entity: "role", id: role});
+  
+    //setMenu(items);
+    console.log(response);
+
+    const tmppermissions = response.result.permissions;
+    
+    const result = items.filter((item) => {
+      return tmppermissions.hasOwnProperty(item.key) ? tmppermissions[item.key]: false;
+      
+    });
+
+    setMenu([...result]);
+    setPermissions(response.result.permissions);
+  };
 
   useEffect(() => {
     if (location)
@@ -211,6 +194,7 @@ function Sidebar({ collapsible, isMobile = false }) {
           cursor: 'pointer',
         }}
       >
+
         <img src={logoIcon} alt="Logo" style={{ marginLeft: '-5px', height: '40px' }} />
 
         {!showLogoApp && (
@@ -226,7 +210,7 @@ function Sidebar({ collapsible, isMobile = false }) {
         )}
       </div>
       <Menu
-        items={items}
+        items={menu}
         mode="inline"
         theme={'light'}
         selectedKeys={[currentPath]}

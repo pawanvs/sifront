@@ -13,6 +13,7 @@ const Order = lazy(() => import('@/pages/Order'));
 // const Invoice = lazy(() => import('@/pages/Invoice'));
 
 
+const MenuSettingsPage  = lazy(() => import('@/pages/MenuSettings'));
 const Invoice = lazy(() => import('@/modules/InvoiceModule/invoice-index'));
 const OpenInvoice = lazy(() => import('@/modules/InvoiceModule/open-invoice-index'));
 
@@ -68,6 +69,10 @@ let routes = {
     {
       path: '/login',
       element: <Navigate to="/" />,
+    },
+    {
+      path : "module-config",
+      element : <MenuSettingsPage />
     },
     {
       path: '/verify/*',
