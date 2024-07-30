@@ -31,6 +31,7 @@ export default function LoginForm() {
           placeholder={translate('email')}
           type="email"
           size="large"
+          value={"admin@demo.com"}
         />
       </Form.Item>
       <Form.Item
@@ -46,6 +47,9 @@ export default function LoginForm() {
           prefix={<LockOutlined className="site-form-item-icon" />}
           placeholder={translate('password')}
           size="large"
+
+          value={"admin123"}
+
         />
       </Form.Item>
       

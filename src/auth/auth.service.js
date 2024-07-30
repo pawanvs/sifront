@@ -4,6 +4,54 @@ import axios from 'axios';
 import errorHandler from '@/request/errorHandler';
 import successHandler from '@/request/successHandler';
 
+export const requestOtp = async ({ loginData }) => {
+  try {
+
+    const response = await axios.post(
+      API_BASE_URL + `request-otp`,
+      loginData
+    );
+
+
+    const { status, data } = response;
+
+    successHandler(
+      { data, status },
+      {
+        notifyOnSuccess: false,
+        notifyOnFailed: true,
+      }
+    );
+    return data;
+  } catch (error) {
+    return errorHandler(error);
+  }
+};
+
+export const verifyOtp = async ({ loginData }) => {
+  try {
+
+    const response = await axios.post(
+      API_BASE_URL + `verify-otp`,
+      loginData
+    );
+
+
+    const { status, data } = response;
+
+    successHandler(
+      { data, status },
+      {
+        notifyOnSuccess: false,
+        notifyOnFailed: true,
+      }
+    );
+    return data;
+  } catch (error) {
+    return errorHandler(error);
+  }
+};
+
 export const login = async ({ loginData }) => {
   try {
     const response = await axios.post(
