@@ -1,13 +1,7 @@
-import { Button, Result } from 'antd';
-// components/MenuSettingsPage.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
-
-import CreateRoleDrawer from './CreateRoleDrawer'
-
+import { Button } from 'antd';
+import CreateRoleDrawer from './CreateRoleDrawer';
 import request from '@/request/request';
-
 import useLanguage from '@/locale/useLanguage';
 
 const MenuSettingsPage = () => {
@@ -23,9 +17,8 @@ const MenuSettingsPage = () => {
     }, [selectedRole]);
 
     const fetchPermissions = async (role) => {
-        //const response = await axios.get(`/api/roles/${role}`);
         const response = await request.read({ entity: "role", id: role });
-        setId(response.result._id)
+        setId(response.result._id);
         setPermissions(response.result.permissions);
     };
 
@@ -37,38 +30,38 @@ const MenuSettingsPage = () => {
     };
 
     const onClose = () => {
-
-        setOpen(false)
-    }
+        setOpen(false);
+    };
 
     const savePermissions = async () => {
-
-        request.update({
+        await request.update({
             entity: 'role', id, jsonData: {
                 name: selectedRole,
                 permissions
             }
         });
-
     };
+
     return (
-
-        <div style={{ textAlign: 'center', padding: '50px' }}>
-
-            <div>
-                <h1>Menu Settings</h1>
-                <Button onClick={() => { setOpen(true) }} >Create</Button>
-                <CreateRoleDrawer open={open} onClose={onClose} />
-                <select onChange={(e) => setSelectedRole(e.target.value)} value={selectedRole}>
+        <div className="menu-settings-container">
+            <div className="menu-settings-header">
+                <h1 className="menu-settings-title">Menu Settings</h1>
+            </div>
+            <CreateRoleDrawer open={open} onClose={onClose} />
+            <div className="menu-settings-content">
+                <select
+                    className="menu-settings-role-selector"
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    value={selectedRole}
+                >
                     {roles.map(role => (
                         <option key={role} value={role}>{role}</option>
                     ))}
                 </select>
-                <div>
+                <div className="menu-settings-permissions">
                     {Object.keys(permissions).map(menu => (
-                        
-                        <div key={menu}>
-                            <label>{menu}</label>
+                        <div key={menu} className="menu-settings-permission-item">
+                            <label>{menu.charAt(0).toUpperCase() + menu.slice(1)}</label>
                             <input
                                 type="checkbox"
                                 checked={permissions[menu] || false}
@@ -77,13 +70,23 @@ const MenuSettingsPage = () => {
                         </div>
                     ))}
                 </div>
-                <button onClick={savePermissions}>Save</button>
+            </div>
+            <div className="menu-settings-footer">
+                <Button type="primary" onClick={savePermissions}>Save</Button>
+                <Button onClick={() => setOpen(true)} style={{ marginLeft: '10px' }}>Create</Button>
             </div>
         </div>
-
-
-
     );
 };
 
 export default MenuSettingsPage;
+
+
+
+
+
+
+
+
+
+

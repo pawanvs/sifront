@@ -4,13 +4,13 @@ import { Button, DatePicker, Space, Table, Dropdown, Tag , Modal, Drawer , Input
 import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import { request } from '@/request';
 import dayjs from 'dayjs';
-import NotesTable from './NotesTable';
+
 
 import * as XLSX from 'xlsx';
 import { useMoney, useDate } from '@/settings';
 
 // import request from '@/request';
-
+ import NotesTable from '@/pages/NotesTable';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { crud } from '@/redux/crud/actions';
@@ -445,18 +445,18 @@ export default () => {
             <p>Customer Name: </p>
             <p>Amount:</p>
 
-            <TextArea
+            <TextArea style={{'marginBottom':'15px'}}
               rows={4}
               placeholder="Add a note"
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
-            <Button type="primary" onClick={handleAddNote}>
-              Add Note
+            <Button type="primary" onClick={handleAddNote} >
+              Add Note 1
             </Button>
-          
-          <h1> {selectedInvoice.number}</h1>
-           <NotesTable invoiceNumber={selectedInvoice.number}/>
+            <div>
+                <NotesTable invoiceNumber = {selectedInvoice.number}/>
+            </div>
           </>
         )}
       </Drawer>

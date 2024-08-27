@@ -26,14 +26,16 @@ const MyForm = ({userData}) => {
   const [otp, setOtp] = useState('');
   const [timer, setTimer] = useState(0);
   const [canResend, setCanResend] = useState(true);
+  const [isOtpSent, setIsOtpSent] = useState(false);
 
   const dispatch = useDispatch();
 
   const generateOtp = () => {
     // Your OTP generation logic here
+    sendOtp();
     message.success('OTP generated and sent to your email/phone');
     setCanResend(false);
-    setTimer(30 * 60); // 30 minutes in seconds
+    setTimer(30 ); // 30 minutes in seconds
   };
 
   const resendOtp = () => {
@@ -60,10 +62,11 @@ const MyForm = ({userData}) => {
       
       try{
         const responseData = await authService.requestOtp({ loginData: { 'email': 'ranganath.cse@gmail.com' } });
-        successHandler(responseData, {
-          notifyOnSuccess: true,
-          notifyOnFailed: true,
-        });
+        
+        // successHandler(responseData, {
+        //   notifyOnSuccess: true,
+        //   notifyOnFailed: true,
+        // });
 
       }catch(error){
 
@@ -71,7 +74,7 @@ const MyForm = ({userData}) => {
   
       message.success('OTP Sent');
       setIsOtpSent(true);
-      setIsResendDisabled(true);
+      //setIsResendDisabled(true);
       //startCountdown();
       
     } catch (error) {
@@ -89,9 +92,14 @@ const MyForm = ({userData}) => {
     try{
       const responseData = await authService.verifyOtp({ loginData: { 'email': userData.email , otp: otp } });
       
-   
-      console.log(responseData );
-     // dispatch(login({ loginData: userData }));
+    if(responseData.success){
+      message.success('OTP  verfied');
+      dispatch(login({ loginData: userData }));
+    }else{
+
+      message.error('OTP Not verfied');
+    }
+     
 
     }catch(error){
 
@@ -118,7 +126,7 @@ const MyForm = ({userData}) => {
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Submit
+            Verify
           </Button>
         </Form.Item>
       </Form>

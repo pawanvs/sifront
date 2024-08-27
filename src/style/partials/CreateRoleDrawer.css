@@ -1,0 +1,35 @@
+.create-role-drawer {
+    color:#1890ff;
+}
+
+.create-role-drawer .ant-drawer-title {
+    color: #0398c2; 
+    text-align: center; 
+}
+
+.create-role-drawer .ant-drawer-body {
+    padding: 20px; 
+    background-color: #f5f5f5; 
+}
+
+.create-role-drawer .ant-form-item-control-input-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+}
+
+.create-role-drawer .ant-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.create-role-drawer-footer {
+    text-align: center; 
+    background-color: #f0f2f5; 
+    padding: 10px 0;
+    padding-bottom: 150px;
+}
+
+.create-role-drawer-footer .ant-btn:last-child {
+    margin-right: 0; 
+}

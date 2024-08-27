@@ -1,108 +1,68 @@
 import { useEffect, useState } from 'react';
-import * as authService from '@/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Form, Button, message } from 'antd';
 
-import axios from 'axios';
-import { API_BASE_URL } from '@/config/serverApiConfig';
+import * as authService from '@/auth';
+import { login } from '@/redux/auth/actions';
+import { selectAuth } from '@/redux/auth/selectors';
+import useLanguage from '@/locale/useLanguage';
 import errorHandler from '@/request/errorHandler';
 import successHandler from '@/request/successHandler';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-
-import useLanguage from '@/locale/useLanguage';
-
-import { Form, Button, Input , message} from 'antd';
-
-import { login } from '@/redux/auth/actions';
-import { selectAuth } from '@/redux/auth/selectors';
-import LoginForm from '@/forms/LoginForm';
-import OTPForm from '@/forms/OtpForm';
 import Loading from '@/components/Loading';
 import AuthModule from '@/modules/AuthModule';
+import LoginForm from '@/forms/LoginForm';
+import OTPForm from '@/forms/OtpForm';
 
 const LoginPage = () => {
- 
-  const [loginData, setLoginData] = useState('');
+  const [loginData, setLoginData] = useState(null);
   const [showLogin, setShowLogin] = useState(true);
-  const translate = useLanguage();
+  const [userData, setUserData] = useState(null);
+  
   const { isLoading, isSuccess } = useSelector(selectAuth);
-  const [userData, setUserData] = useState('');
+  const translate = useLanguage();
   const navigate = useNavigate();
-  // const size = useSize();
 
-  const onFinish = async (values) => {
+  const handleLogin = async (values) => {
+    try {
+      const data = await authService.login({ loginData: values });
+      setLoginData(values);
 
-    const data = await authService.login({ loginData: values });
-
-    setLoginData(values);
-
-    if (data.success === true) {
-
-      setUserData(values);
-
-      setShowLogin(false);
-      sendOtp(values.email);
-
-    }else{
-      console.log("login verified");
-
-      setShowLogin(true);
-     
-
+      if (data.success) {
+        setUserData(values);
+        setShowLogin(false);
+        sendOtp(values.email);
+      } else {
+        console.log("Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
     }
+  };
 
+  const sendOtp = async (email) => {
+    try {
+      const responseData = await authService.requestOtp({ loginData: { email } });
+      // successHandler(responseData, {
+      //   notifyOnSuccess: true,
+      //   notifyOnFailed: true,
+      // });
+      message.success('OTP Sent');
+    } catch (error) {
+      errorHandler(error);
+    }
   };
 
   useEffect(() => {
-    //if (isSuccess) navigate('/');
-
-    if (isSuccess) setOtp(true);
-
+    if (isSuccess) setShowLogin(false);
   }, [isSuccess]);
 
-  const sendOtp = async (email) => {
-   
-    try {
-      
-      try{
-        const responseData = await authService.requestOtp({ loginData: { 'email': email } });
-        successHandler(responseData, {
-          notifyOnSuccess: true,
-          notifyOnFailed: true,
-        });
-
-      }catch(error){
-
-      }
-  
-      message.success('OTP Sent');
-      setIsOtpSent(true);
-      setIsResendDisabled(true);
-      //startCountdown();
-      
-    } catch (error) {
-      console.log(error)
-      return errorHandler(error);
-
-    }
- 
-  };
-
-  const FormContainer = () => {
-    return (
-
-      <>
-
-        <Loading isLoading={isLoading}>
-         {showLogin && <Form
-            layout="vertical"
-            name="normal_login"
-            className="login-form"
-            initialValues={{
-              remember: true,
-            }}
-            onFinish={onFinish}
-          >
+  return (
+    <AuthModule authContent={
+      <Loading isLoading={isLoading}>
+        {showLogin ? (
+          <Form layout="vertical" onFinish={handleLogin}>
             <LoginForm />
             <Form.Item>
               <Button
@@ -115,21 +75,13 @@ const LoginPage = () => {
                 {translate('Log in')}
               </Button>
             </Form.Item>
-          </Form>} 
-
-        {!showLogin &&  <OTPForm  userData={userData}/>}
-        </Loading>
-      </>
-
-    );
-  };
-
-  return (<>
-
-    {/* <OtpContainer/> */}
-    <AuthModule authContent={<FormContainer />} AUTH_TITLE="Sign in" />
-
-  </>);
+          </Form>
+        ) : (
+          <OTPForm userData={userData} />
+        )}
+      </Loading>
+    } AUTH_TITLE="Sign in" />
+  );
 };
 
 export default LoginPage;

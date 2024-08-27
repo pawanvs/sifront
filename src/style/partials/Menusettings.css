@@ -1,0 +1,132 @@
+/* components/MenuSettingsPage.css */
+
+.menu-settings-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    padding: 20px;
+    background-color: #f0f4f8;/* components/MenuSettingsPage.css */
+
+    .menu-settings-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+      background-color: #f0f4f8;
+      text-align: center;
+    }
+    
+    .menu-settings-header, .menu-settings-content, .menu-settings-footer {
+      width: 100%;
+      max-width: 500px;
+    }
+    
+    .menu-settings-title {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .menu-settings-role-selector {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      
+    }
+    
+    .menu-settings-permissions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .menu-settings-permission-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 300px;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .menu-settings-footer {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    
+    label {
+      color: #333;
+      margin-right: 10px;
+    }
+    
+    input[type="checkbox"] {
+      transform: scale(1.5);
+      margin-left: 10px;
+    }
+    
+    text-align: center;
+  }
+  
+  .menu-settings-header, .menu-settings-content, .menu-settings-footer {
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .menu-settings-title {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .menu-settings-role-selector {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .menu-settings-permissions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .menu-settings-permission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .menu-settings-footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  label {
+    color: #333;
+    margin-right: 10px;
+  }
+  
+  input[type="checkbox"] {
+    transform: scale(1.5);
+    margin-left: 10px;
+  }
+  

@@ -1,17 +1,15 @@
-// components/CreateRoleDrawer.jsx
 import React, { useState } from 'react';
 import { Drawer, Button, Form, Input, Checkbox, Space, message } from 'antd';
-
 import request from '@/request/request';
 
-const modules = [
-  'dashboardModule',
-  'customerModule',
-  'openInvoiceModule',
-  'companyModule',
-  'invoiceModule',
-  'settingsModule'
 
+const modules = [
+  'DashboardModule',
+  'CustomerModule',
+  'OpenInvoiceModule',
+  'CompanyModule',
+  'InvoiceModule',
+  'SettingsModule'
 ];
 
 const CreateRoleDrawer = ({ open, onClose }) => {
@@ -29,13 +27,14 @@ const CreateRoleDrawer = ({ open, onClose }) => {
 
   const createRole = async () => {
     try {
-
-        request.create({entity: 'role', jsonData:{
-        name: roleName,
-        permissions}
+      await request.create({
+        entity: 'role',
+        jsonData: {
+          name: roleName,
+          permissions
+        }
       });
-    
-      message.success(`Role ${response.data.name} created successfully!`);
+      message.success(`Role ${roleName} created successfully!`);
       onClose();
     } catch (error) {
       message.error('Error creating role.');
@@ -47,9 +46,10 @@ const CreateRoleDrawer = ({ open, onClose }) => {
       title="Create New Role"
       width={400}
       onClose={onClose}
-      visible={open}
+      open={open}
+      className="create-role-drawer"
       footer={
-        <div style={{ textAlign: 'right' }}>
+        <div className="create-role-drawer-footer">
           <Button onClick={onClose} style={{ marginRight: 8 }}>
             Cancel
           </Button>
@@ -60,7 +60,7 @@ const CreateRoleDrawer = ({ open, onClose }) => {
       }
     >
       <Form layout="vertical">
-        <Form.Item label="Role Name">
+        <Form.Item label="Role Name:">
           <Input
             value={roleName}
             onChange={(e) => setRoleName(e.target.value)}
