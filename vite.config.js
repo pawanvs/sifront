@@ -9,7 +9,7 @@ export default ({ mode }) => {
   const proxy_url =
     process.env.VITE_DEV_REMOTE === 'remote'
       ? process.env.VITE_BACKEND_SERVER
-      : 'http://si.nividhi.com:5000/';
+      : 'https://si.nividhi.com:5000/';
 
   const config = {
     plugins: [react()],
@@ -20,6 +20,11 @@ export default ({ mode }) => {
       },
     },
     server: {
+      https: {
+        key: fs.readFileSync('niv/privkey1.pem'),
+        cert: fs.readFileSync('niv/fullchain1.pem'),
+        ca: fs.readFileSync('niv/chain1.pem'),
+      },
       host: '0.0.0.0',
       port: 4000,
       proxy: {
