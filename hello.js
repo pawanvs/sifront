@@ -1,4 +1,4 @@
-const http = require('http');
+// const http = require('http');
 const https = require('https');
 
 const host = '0.0.0.0';
@@ -8,8 +8,9 @@ var fs = require('fs');
 
 // This line is from the Node.js HTTPS documentation.
 var options = {
-  key: fs.readFileSync('test/fixtures/keys/agent2-key.pem'),
-  cert: fs.readFileSync('test/fixtures/keys/agent2-cert.cert')
+  key: fs.readFileSync('niv/privkey1.pem'),
+  cert: fs.readFileSync('niv/fullchain1.pem'),
+  ca:fs.readFileSync('niv/chain1.pem')
 };
 
 const server = https.createServer(options, (req, res) => {
