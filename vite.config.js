@@ -11,7 +11,7 @@ export default ({ mode }) => {
   const proxy_url =
     process.env.VITE_DEV_REMOTE === 'remote'
       ? process.env.VITE_BACKEND_SERVER
-      : 'http://si.nividhi.com:5000/';
+      : 'https://si.nividhi.com:5000/';
 
   // Vite configuration
   const config = {
@@ -34,7 +34,7 @@ export default ({ mode }) => {
         '/api': {
           target: proxy_url,      // Proxy backend API
           changeOrigin: true,
-          secure: false,          // Set to true if backend uses HTTPS
+          secure: true,          // Set to true if backend uses HTTPS
         },
       },
     },
