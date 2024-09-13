@@ -11,7 +11,7 @@ export default ({ mode }) => {
   const proxy_url =
     process.env.VITE_DEV_REMOTE === 'remote'
       ? process.env.VITE_BACKEND_SERVER
-      : 'https://si.nividhi.com:5000/';
+      : 'http://si.nividhi.com:5000/';
 
   // Vite configuration
   const config = {
