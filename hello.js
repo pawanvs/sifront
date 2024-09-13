@@ -10,7 +10,7 @@ var fs = require('fs');
 var options = {
   key: fs.readFileSync('niv/privkey1.pem'),
   cert: fs.readFileSync('niv/fullchain1.pem'),
-  ca:fs.readFileSync('niv/chain1.pem')
+  ca:fs.readFileSync('niv/chain1.pem'),
 };
 
 const server = https.createServer(options, (req, res) => {
